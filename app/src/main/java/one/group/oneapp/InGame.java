@@ -20,6 +20,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Chronometer;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -28,15 +30,15 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
     private final int UPGRADE_MENU = 1;
     private myThread thread;
     public Paint black;
+    private TextView sellView;
     private int height = 480, width = 480;  //defaults incase not set yet.
     float scale;
-    private HarvestableManager harvestableManager = new HarvestableManager();
-    private Player player = new Player();
+    private Game game = new Game();
 
     SurfaceView mSurfaceView;
     String TAG = "InGame";
 
-
+    private Chronometer timeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,10 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
 
         black = new Paint();  //default is black and we really are not using it.  need it to draw the alien.
 
+        sellView = ((TextView)findViewById(R.id.sell));
+
+
+
 
         //get a generic surface and all our callbacks to it, with a touchlistener.
         mSurfaceView = findViewById(R.id.surfaceView); //new SurfaceView(this);
@@ -60,26 +66,12 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
                 // Retrieve the new x and y touch positions
                 int touchx = (int) event.getX();
                 int touchy = (int) event.getY();
-                Log.w(TAG,"X: " + touchx + " Y: " + touchy);
-                int xDiff = Math.abs(touchx - player.getX());
-                int yDiff = Math.abs(touchy - player.getY());
-                if (xDiff > yDiff) {
-                    if (touchx > player.getX()) {
-                        player.setDirection(Player.Directions.RIGHT);
-                    } else {
-                        player.setDirection(Player.Directions.LEFT);
-                    }
-                } else {
-                    if (touchy > player.getY()) {
-                        player.setDirection(Player.Directions.DOWN);
-                    } else {
-                        player.setDirection(Player.Directions.UP);
-                    }
-                }
+                game.doTouch(touchx,touchy);
                 return true;
             }
 
         });
+
     }
 
     @Override
@@ -95,12 +87,24 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
 
     public void clickUpgrades(View view){
         Intent intent = new Intent(InGame.this,UpgradeMenu.class);
+        //intent.putExtra("game",(Object)game);
         startActivityForResult(intent, UPGRADE_MENU);
+
 
     }
 
+    public void clickSell(View view){
+        //View text = findViewById(R.id.sell);
+        //((TextView) text).setText("Sell some of " + game.getPlayer().sell() + " items");
+        game.getPlayer().sell();
+    }
+
+    public void updateViews(){
+        sellView.setText("Sell some of " + game.getPlayer().getItems() + " items");
+    }
+
     public HarvestableManager getHarvestableManager() {
-        return harvestableManager;
+        return game.getHarvestableManager();
     }
 
     @Override
@@ -113,24 +117,9 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
     }
 
     public Player getPlayer() {
-        return player;
+        return game.getPlayer();
     }
 
-    public void draw(Canvas c) {
-        if(c == null) return;
-        c.drawColor(Color.BLACK);
-        //c.drawBitmap(alien, null, myRect, black);
-        Paint brush = new Paint();
-        brush.setColor(Color.rgb(0xff,0xf0,0xff));
-        //brush.setStyle(Paint.Style.STROKE);
-        c.drawRect(player.getX(),player.getY(),player.getX()+player.getWidth(),player.getY()+player.getHeight(),brush);
-        brush.setColor(Color.rgb(0x00,0x00,0xff));
-        for(Collidable item: harvestableManager.getPlants()) {
-            c.drawRect(item.getX(),item.getY(),item.getX()+item.getWidth(),item.getY()+item.getHeight(),brush);
-
-        }
-
-    }
 
 
     //all the methods needed for the SurfaceHolder.Callback
@@ -168,6 +157,8 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
             }
         }
     }
+
+
     class myThread extends Thread {
         private SurfaceHolder _surfaceHolder;
 
@@ -192,7 +183,7 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
                     c = _surfaceHolder.lockCanvas(null);
                     synchronized (_surfaceHolder) {
                         //call a method that draws all the required objects onto the canvas.
-                        draw(c);
+                        game.draw(c);
                     }
                 } finally {
                     // do this in a finally so that if an exception is thrown
@@ -203,9 +194,21 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
                     }
                 }
                 //handle the game updates
-                player.move();
-                harvestableManager.collidePlayer(player);
+                game.update();
 
+                //begins countdown of stopwatch which will be unlocked from upgrades
+                timeView = findViewById(R.id.timeView);
+                timeView.start();
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        updateViews();
+                        // Stuff that updates the UI
+
+                    }
+                });
                 //sleep for a short period of time.
                 if (!Running) return;  //don't sleep, just exit if we are done.
                 try {

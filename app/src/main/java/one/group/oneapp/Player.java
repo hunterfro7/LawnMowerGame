@@ -4,6 +4,9 @@ package one.group.oneapp;
 //import android.view.MotionEvent;
 //import android.widget.ImageView;
 
+import java.util.ArrayList;
+
+
 public class Player implements Collidable //GestureDetector.OnGestureListener
 {
 //    //No clue what the GestureDetector line does
@@ -18,11 +21,13 @@ public class Player implements Collidable //GestureDetector.OnGestureListener
 //    private int screenWidth;
 //    private int screenHeight;
 
-    private int x,y,width,height,items;
+    private int x,y,width,height,money;
     private static final int minX = 0;
     private static final int minY = 300;
     private static final int maxX = 1050;
     private static final int maxY = 1750;
+    private Wallet wallet;
+    private ArrayList<Item> items;
     private double speed;
     private Directions direction;
     public enum Directions{
@@ -37,22 +42,24 @@ public class Player implements Collidable //GestureDetector.OnGestureListener
         this.height = 100;
         this.width = 100;
         this.speed = 5;
-        this.items = 0;
+        this.items = new ArrayList<Item>();
+        this.items.add(new GrassItem());
+        this.wallet = new Wallet();
         this.direction = Directions.LEFT;
     }
     public void move(){
         switch(this.direction){
             case LEFT:
-                this.x += this.speed * -1;
+                this.x += this.getSpeed() * -1;
                 break;
             case RIGHT:
-                this.x += this.speed;
+                this.x += this.getSpeed();
                 break;
             case UP:
-                this.y += this.speed * -1;
+                this.y += this.getSpeed() * -1;
                 break;
             case DOWN:
-                this.y += this.speed;
+                this.y += this.getSpeed();
                 break;
         }
         if(this.x < this.minX) this.x = this.minX;
@@ -82,11 +89,19 @@ public class Player implements Collidable //GestureDetector.OnGestureListener
     }
 
     public int getItems() {
-        return items;
+        return items.get(0).getCount();
+    }
+
+    public double getSpeed() {
+        return speed;
     }
 
     public void incrementItems(){
-        items++;
+        items.get(0).increaseCount(1);
+    }
+
+    public void sell(){
+        items.get(0).sell(wallet,5,1);
     }
 
     public void setDirection(Directions direction) {
