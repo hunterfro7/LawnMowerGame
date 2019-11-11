@@ -1,6 +1,5 @@
 package one.group.oneapp;
 
-<<<<<<< HEAD
 public class TimerUpgrade extends AbstractUpgrade {
 
     private int cost;
@@ -18,20 +17,16 @@ public class TimerUpgrade extends AbstractUpgrade {
         locked = true;
     }
 
-    public String buy(Wallet playerWallet){
-        if (locked = false)
-        {
+    public String buy(Wallet playerWallet) {
+        if (locked = false) {
             int price = getCost();
 
-            if (playerWallet.getMoney() > price)
-            {
+            if (playerWallet.getMoney() > price) {
                 playerWallet.setMoney(playerWallet.getMoney() - price);
                 ++level;
 
                 return "Upgrade Purchased";
-            }
-            else
-            {
+            } else {
                 return "Broke boy";
             }
 
@@ -39,8 +34,5 @@ public class TimerUpgrade extends AbstractUpgrade {
 
         return upgradeName + " Upgrade is locked";
     }
-=======
-public class TimerUpgrade extends AbstractUpgrade
-{
->>>>>>> 82217f3ab944d7ccbf136ef97b86152ae61b6beb
 }
+
