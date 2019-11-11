@@ -1,5 +1,6 @@
 package one.group.oneapp;
 
+<<<<<<< HEAD
 public class TimerUpgrade extends AbstractUpgrade {
 
     private int cost;
@@ -38,4 +39,8 @@ public class TimerUpgrade extends AbstractUpgrade {
 
         return upgradeName + " Upgrade is locked";
     }
+=======
+public class TimerUpgrade extends AbstractUpgrade
+{
+>>>>>>> 82217f3ab944d7ccbf136ef97b86152ae61b6beb
 }

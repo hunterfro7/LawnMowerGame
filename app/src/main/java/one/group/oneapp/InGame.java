@@ -20,7 +20,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
+<<<<<<< HEAD
 import android.widget.Chronometer;
+=======
+>>>>>>> 82217f3ab944d7ccbf136ef97b86152ae61b6beb
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -195,11 +198,14 @@ public class InGame extends Activity implements SurfaceHolder.Callback {
                 }
                 //handle the game updates
                 game.update();
+<<<<<<< HEAD
 
                 //begins countdown of stopwatch which will be unlocked from upgrades
                 timeView = findViewById(R.id.timeView);
                 timeView.start();
 
+=======
+>>>>>>> 82217f3ab944d7ccbf136ef97b86152ae61b6beb
                 runOnUiThread(new Runnable() {
 
                     @Override

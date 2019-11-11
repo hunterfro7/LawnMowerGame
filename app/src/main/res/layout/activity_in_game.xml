@@ -47,6 +47,7 @@
         android:text="Money"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+<<<<<<< HEAD
 
     <Chronometer
         android:id="@+id/timeView"
@@ -60,4 +61,6 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+=======
+>>>>>>> 82217f3ab944d7ccbf136ef97b86152ae61b6beb
 </androidx.constraintlayout.widget.ConstraintLayout>
